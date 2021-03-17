@@ -41,6 +41,7 @@ public class ScreenServlet extends HttpServlet
 
 	private CachedDisplay createHtml(final DisplayKey key) throws Error
 	{
+	    logger.log(Level.FINE, () -> "Creating HTML for " + key);
 	    try
 	    {
     	    final long start = System.currentTimeMillis();
@@ -52,12 +53,11 @@ public class ScreenServlet extends HttpServlet
             html_writer.close();
             final long ms = System.currentTimeMillis() - start;
             final CachedDisplay cached = new CachedDisplay(key, html_buf.toString(), ms);
-            logger.log(Level.INFO, cached.toString());
             return cached;
 	    }
 	    catch (final Exception ex)
 	    {
-	        throw new Error("Cannot create " + key, ex);
+	        throw new Error("Cannot create display " + key, ex);
 	    }
 	}
 
@@ -65,7 +65,12 @@ public class ScreenServlet extends HttpServlet
 	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException
 	{
 		final String display_name = request.getParameter("display");
-		logger.log(Level.INFO, "screen/display=" + display_name);
+		logger.log(Level.FINE, "screen/display=" + display_name);
+
+		final String flag = request.getParameter("cache");
+		final boolean use_cache = flag == null  ||  flag.isEmpty()
+		                        ? true
+		                        : Boolean.parseBoolean(flag);
 
 		Map<String, String> macro_map = Collections.emptyMap();
 		String json_macros = request.getParameter("macros");
@@ -73,7 +78,7 @@ public class ScreenServlet extends HttpServlet
 		{
             json_macros = HTMLUtil.unescape(request.getParameter("macros"));
 		    macro_map = MacroUtil.fromJSON(json_macros);
-            logger.log(Level.INFO, ".. and macros " + macro_map);
+            logger.log(Level.FINE, ".. and macros " + macro_map);
 		}
 
 		if (display_name == null)
@@ -100,7 +105,9 @@ public class ScreenServlet extends HttpServlet
 		final DisplayKey key = new DisplayKey(display_name, macro_map);
 		try
 		{
-		    final CachedDisplay cached = DisplayCache.getOrCreate(key, this::createHtml);
+		    final CachedDisplay cached = use_cache
+		                               ? DisplayCache.getOrCreate(key, this::createHtml)
+		                               : createHtml(key);
 			response.setContentType("text/html");
 			response.setCharacterEncoding("UTF-8");
 			final PrintWriter writer = response.getWriter();

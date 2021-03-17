@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Display Builder Web Runtime</title>
+<link rel="shortcut icon" href="favicon.png">
 <link rel="stylesheet" type="text/css" href="css/widgets.css">
 <script type="text/javascript" src="../pvws/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="../pvws/js/tablesort.js"></script>
@@ -61,7 +62,7 @@ view.jsp?display=file:/Path/to/Display+Builder/01_main.bob
 If the display contains links to other resources like images,
 these will be turned URLs relative to the display URL,
 i.e. also 'file:/' URLs.
-The <u>client</u> will then try to resolve them,
+The <span style="text-decoration: underline">client</span> will then try to resolve them,
 not the server, which can cause two problems.
 For one, the path will not resolve, because it was only
 a valid file on the server, not the client.
@@ -102,6 +103,13 @@ view.jsp?display=https://some_host/opi/file.opi&amp;macros=%7B%22S%22%3A%2206%22
 cache
 </pre>
 
+<p>During display development, caching can be disabled by including  <code>cache=false</code> in the request:</p>
+
+<pre class="example_url">
+view.jsp?cache=false&amp;display=file:/Path/to/Display+Builder/01_main.bob
+</pre>
+
+
 <input type="button" value="Cache Info" onclick="query_cache()">
 <input type="button" value="Clear Cache" onclick="clear_cache()">
 
@@ -112,6 +120,19 @@ cache
 <hr>
 
 <div id="versions">
+2021-03-01 Support 'led' and 'multi_state_led' labels.<br>
+2021-02-04 Support 'byte monitor' labels.<br>
+2021-01-29 Indicate read-only via same cursor as in CS-Studio.<br>
+2021-01-28 Simple 'spinner'.<br>
+2020-11-20 Suppress '{fileselector}'.<br>
+2020-11-02 favicon.<br>
+2020-10-28 Handle legacy Combo with items not-from-PV.<br>
+2020-10-21 Defer initial update for known PV to next cycle (avoids update while widget still initializes).<br>
+2020-10-05 Support 'navtabs' widgets.<br>
+2020-10-02 Embedded display indicates name of failed/missing file.<br>
+2020-10-01 Support 'cache=false'.<br>
+2020-09-30 Support macros for 'Tabs'.<br>
+2020-08-28 Combo support.<br>
 2020-07-13 '$(DID)'.<br>
 2020-06-11 'Symbol' widget for images. 'Text-Symbol'. Remove 'Disconnect' button. For testing, click on the connection indicator.<br>
 2020-06-10 Disable DTD. Mark response as UTF-8 to support wider character sets.<br>
